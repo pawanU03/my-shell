@@ -5,8 +5,12 @@ import os
 
 # dictionary of commands
 commands = {
+    # exit the shell
+    'exit' : lambda exit_status=0, *_: print(os._exit(exit_status)),
     # *args: allow to take variable number of arguments
-    'echo' : lambda *args: print(" ".join(args))
+    'echo' : lambda *args: print(" ".join(args)),
+    # 
+    'type' : lambda command: print(f"{command} is a shell builtin") if command in commands else print(f"{command}: not found")
 }
 
 
@@ -21,17 +25,11 @@ def main():
         # split command to a command and an argument
         command = command_with_arguments[0]
         argument = command_with_arguments[1:]
-        
-        
-        # to exit the shell
-        if command == "exit":
-           quit()
-        
+
         # command not found
         if command not in commands:
             print(f"{command}: command not found")
             continue
-        
         commands[command](*argument)
     
 if __name__ == "__main__":
