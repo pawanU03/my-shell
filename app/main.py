@@ -1,7 +1,15 @@
 import sys
 import os
+import shutil
 
-
+# type command
+def type(command):
+    command_path = shutil.which(command)
+    if command in commands:
+        print(f"{command} is a shell builtin")
+    elif command_path:
+        print(f"{command} is {command_path}")
+    else: print(f"{command}: not found")
 
 # dictionary of commands
 commands = {
@@ -9,8 +17,8 @@ commands = {
     'exit' : lambda exit_status=0, *_: print(os._exit(exit_status)),
     # *args: allow to take variable number of arguments
     'echo' : lambda *args: print(" ".join(args)),
-    # 
-    'type' : lambda command: print(f"{command} is a shell builtin") if command in commands else print(f"{command}: not found")
+    # lambda command: print(f"{command} is a shell builtin") if command in commands else print(f"{command}: not found")
+    'type' : type,
 }
 
 
