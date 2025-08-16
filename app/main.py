@@ -1,11 +1,11 @@
 import sys
 import os
-import shutil
 
 # type command
 def type_command(command):
     if command in commands:
         print(f"{command} is a shell builtin")
+        return
     
     PATH = os.environ['PATH']
     PATH_DIRS = PATH.split(":")
@@ -14,7 +14,15 @@ def type_command(command):
         if not os.path.exists(dir):
             continue
         
-    pass
+        command_path = os.path.join(dir, command)
+        
+        if os.path.exists(command_path):
+            if os.access(command_path, os.X_OK):
+                print(f"{command} is {command_path}")
+                return
+        
+        
+    print(f"{command}: not found")
 
 # dictionary of commands
 commands = {
