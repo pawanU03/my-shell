@@ -3,13 +3,18 @@ import os
 import shutil
 
 # type command
-def type(command):
-    command_path = shutil.which(command)
+def type_command(command):
     if command in commands:
         print(f"{command} is a shell builtin")
-    elif command_path:
-        print(f"{command} is {command_path}")
-    else: print(f"{command}: not found")
+    
+    PATH = os.environ['PATH']
+    PATH_DIRS = PATH.split(":")
+    
+    for dir in PATH_DIRS:
+        if not os.path.exists(dir):
+            continue
+        
+    pass
 
 # dictionary of commands
 commands = {
@@ -18,7 +23,7 @@ commands = {
     # *args: allow to take variable number of arguments
     'echo' : lambda *args: print(" ".join(args)),
     # lambda command: print(f"{command} is a shell builtin") if command in commands else print(f"{command}: not found")
-    'type' : type,
+    'type' : type_command,
 }
 
 
