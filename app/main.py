@@ -1,28 +1,43 @@
 import sys
 import os
 
-# type command
-def type_command(command):
-    if command in commands:
-        print(f"{command} is a shell builtin")
-        return
-    
+
+def find_executable(command):
+    # Get the PATH environment variable and split it into a list of directories.
     PATH = os.environ['PATH']
     PATH_DIRS = PATH.split(":")
     
+        # Iterate through each directory in the PATH.
     for dir in PATH_DIRS:
+        # Skip directories that don't exist.
         if not os.path.exists(dir):
             continue
-        
+
+        # Construct the full path to the potential command.
         command_path = os.path.join(dir, command)
-        
+
+        # Check if the command exists and is executable.
         if os.path.exists(command_path):
             if os.access(command_path, os.X_OK):
-                print(f"{command} is {command_path}")
-                return
-        
-        
-    print(f"{command}: not found")
+                return command_path
+    return None
+
+# type command
+def type_command(command):
+    command_path = find_executable(command)
+    # Check if the command is a built-in shell command first.
+    if command in commands:
+        print(f"{command} is a shell builtin")
+        return
+
+    elif command_path:
+        print(f"{command} is {command_path}")
+
+    # If the command is not found in the PATH, print a "not found" message.
+    else: print(f"{command}: not found")
+
+def helper():
+    pass
 
 # dictionary of commands
 commands = {
@@ -34,6 +49,7 @@ commands = {
     'type' : type_command,
 }
 
+    
 
 def main():
     while True:        
