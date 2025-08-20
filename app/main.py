@@ -5,6 +5,10 @@ def handle_input():
         # command from user with arguments
         try:
             command_with_arguments = input().split()
+            # handle empty input
+            if not command_with_arguments:
+                return True
+                
         except EOFError:
             return False
         
