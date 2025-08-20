@@ -33,19 +33,22 @@ def type_command(command):
     # If the command is not found in the PATH, print a "not found" message.
     else: print(f"{command}: not found")
 
-
-
-
-
+def change_directory(command_path):
+    try:
+        if os.path.isdir(command_path):
+            return os.chdir(command_path)
+    except:
+        return f"cd: {command_path}: No such file or directory"
+        
+        
 # dictionary of commands
 commands = {
     # exit the shell
     'exit' : lambda exit_status=0, *_: print(os._exit(exit_status)),
     # *args: allow to take variable number of arguments
     'echo' : lambda *args: print(" ".join(args)),
-    # lambda command: print(f"{command} is a shell builtin") if command in commands else print(f"{command}: not found")
     'type' : type_command,
-    'pwd': lambda *args: print(os.getcwd())
+    'pwd'  : lambda **args: print(os.getcwd())
 }
     
 
