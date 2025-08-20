@@ -33,13 +33,18 @@ def type_command(command):
     # If the command is not found in the PATH, print a "not found" message.
     else: print(f"{command}: not found")
 
-def change_directory(command_path):
-    try:
-        if os.path.isdir(command_path):
-            return os.chdir(command_path)
-    except:
-        return f"cd: {command_path}: No such file or directory"
+def change_directory(*args):
+    # not arguments or cd ~
+        if not args or args[0] == "~":
+            target_path = os.path.expanduser("~")
+        else:
+    # path provided
+            target_path = args[0]
         
+        if os.path.isdir(target_path):
+            return os.chdir(target_path)
+        else:
+            print(f"cd: {target_path}: No such file or directory")
         
 # dictionary of commands
 commands = {
@@ -48,7 +53,8 @@ commands = {
     # *args: allow to take variable number of arguments
     'echo' : lambda *args: print(" ".join(args)),
     'type' : type_command,
-    'pwd'  : lambda **args: print(os.getcwd())
+    'pwd'  : lambda **args: print(os.getcwd()),
+    'cd'   : change_directory
 }
     
 
