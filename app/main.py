@@ -70,6 +70,8 @@ def change_directory(*args):
     # not arguments or cd ~
         if not args or args[0] == "~":
             target_path = os.path.expanduser("~")
+        elif args[0] == '/':
+            target_path = "/"
         else:
     # path provided
             target_path = args[0]
