@@ -1,28 +1,34 @@
 import sys
 import os
+from .commands import commands
+from .executor import find_executable
 
 def handle_input():
-        # command from user with arguments
-        try:
-            command_with_arguments = input().split()
-            # handle empty input
-            if not command_with_arguments:
-                return True
-                
-        except EOFError:
-            return False
-        
-        # split command to a command and an argument
-        command = command_with_arguments[0]
-        argument = command_with_arguments[1:]
-
-        # command not found
-        if command in commands:
-            commands[command](*argument)
-        else:
-            executable_path = find_executable(command)
+    # command from user with arguments
+    try:
+        command_with_arguments = input().split()
+        # handle empty input
+        if not command_with_arguments:
+            return True
             
-            if executable_path:
+    except EOFError:
+        return False
+    
+    # split command to a command and an argument
+    command = command_with_arguments[0]
+    argument = command_with_arguments[1:]
+
+    # command not found
+    if command in commands:
+        if command == 'type':
+            commands[command](commands, *argument)
+        else:
+            commands[command](*argument)
+    else:
+        executable_path = find_executable(command)
+        
+        if executable_path:
+            try:
                 # child process, near exact copy of our shell
                 pid = os.fork()
                 if pid == 0:
@@ -31,89 +37,17 @@ def handle_input():
                 else:
                     # parent process
                     os.waitpid(pid, 0)
-            else:
-                print(f"{command}: command not found")
-        return True
-
-def find_executable(command):
-    # Get the PATH environment variable and split it into a list of directories.
-    path_env = os.environ['PATH']
-    path_dirs = path_env.split(":")
-    
-        # Iterate through each directory in the PATH.
-    for dir in path_dirs:
-        # Skip directories that don't exist.
-        if not os.path.isdir(dir):
-            continue
-
-        # Construct the full path to the potential command.
-        executable_path = os.path.join(dir, command)
-
-        if os.path.isfile(executable_path) and os.access(executable_path, os.X_OK):
-            return executable_path
-    return None
-
-# type command
-def type_command(command):
-    # Check if the command is a built-in shell command first.
-    if command in commands:
-        print(f"{command} is a shell builtin")
-        return
-
-    executable_path = find_executable(command)
-    if executable_path:
-        print(f"{command} is {executable_path}")
-    # If the command is not found in the PATH, print a "not found" message.
-    else: print(f"{command}: not found")
-
-def change_directory(*args):
-    # not arguments or cd ~
-        if not args or args[0] == "~":
-            target_path = os.path.expanduser("~")
-        elif args[0] == '/':
-            target_path = "/"
+            except OSError as e:
+                print(f"Error executing command: {e}")
         else:
-    # path provided
-            target_path = args[0]
-        
-        if os.path.isdir(target_path):
-            os.chdir(target_path)
-        else:
-            print(f"cd: {target_path}: No such file or directory")
-            
-
-# exit the shell with argument checking
-def exit_command(*args):
-    if len(args) > 1:
-        print("exit: too many arguments")
-        return
-    
-    if not args:
-        os._exit(0)
-    
-    try:
-        exit_status = int(args[0])
-        os._exit(exit_status)
-    except ValueError:
-        print(f"exit: {args[0]}: numeric argument required")
-        return
-        
-# dictionary of commands
-commands = {
-    # exit the shell
-    'exit' : exit_command,
-    # *args: allow to take variable number of arguments
-    'echo' : lambda *args: print(" ".join(args)),
-    'type' : type_command,
-    'pwd'  : lambda **args: print(os.getcwd()),
-    'cd'   : change_directory
-}
+            print(f"{command}: command not found")
+    return True
     
 
 def main():
     while True:        
         # standard output in terminal
-        sys.stdout.write("$$ ")
+        sys.stdout.write("$ ")
         sys.stdout.flush()
         
         if not handle_input():
