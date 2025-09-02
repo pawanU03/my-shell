@@ -1,5 +1,5 @@
 import os
-from .executor import find_executable
+from executor import find_executable
 
 # exit the shell with argument checking
 def exit_command(*args):

@@ -1,7 +1,7 @@
 import sys
 import os
-from .commands import commands
-from .executor import find_executable
+from commands import commands
+from executor import find_executable
 
 def handle_input():
     # command from user with arguments

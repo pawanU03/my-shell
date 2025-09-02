@@ -1,4 +1,4 @@
-from .builtins import exit_command, type_command, change_directory
+from builtins import exit_command, type_command, change_directory
 import os
 
 # dictionary of commands
