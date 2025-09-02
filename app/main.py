@@ -3,10 +3,26 @@ import os
 from commands import commands
 from executor import find_executable
 
+def parse_line(line):
+    # final list to hold the arguments
+    args = []
+    # argument we are currently passing
+    current_arg = ""
+    in_quote = False
+    
+    for char in line:
+        current_arg += char
+    
+    if current_arg:
+        args.append(current_arg)
+        
+    return args
+
 def handle_input():
     # command from user with arguments
     try:
-        command_with_arguments = input().split()
+        line = input()
+        command_with_arguments = parse_line(line)
         # handle empty input
         if not command_with_arguments:
             return True
